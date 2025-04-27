@@ -71,10 +71,6 @@ userSchema.pre('findOneAndUpdate', async function (next) {
     if (update.password) {
         // Plain text şifrenin uzunluğunu kontrol et
         if (update.password.length < 6 || update.password.length > 30) {
-            return next(new Error('Password should be between 2 and 30 characters.'));
-        }
-
-        if (update.password.length < 6 || update.password.length > 30) {
             return next(new Error('Password should be between 6 and 30 characters.'));
         }
 

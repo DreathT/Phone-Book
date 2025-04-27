@@ -5,14 +5,11 @@ import User from '../models/user.js';
 export const isAuthenticatedUser = async (req, res, next) => {
     try {
         const token = req.header('Authorization').replace('Bearer ', '');
-        console.log("token :", token);
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
         const user = await User.findOne({
             _id: decoded.id
         });
-
-        console.log("user :", user);
 
         if (!user) {
             throw new ErrorHandler('user not found', 404);
@@ -20,7 +17,6 @@ export const isAuthenticatedUser = async (req, res, next) => {
 
         req.token = token;
         req.user = user;
-        console.log("req.user on middleware :", req.user);
         next();
     } catch (error) {
         res.status(401).send({ error: 'Please authenticate' });

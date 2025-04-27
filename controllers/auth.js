@@ -33,10 +33,10 @@ export const register = catchAsyncErrors(async (req, res, next) => {
 
 export const login = catchAsyncErrors(async (req, res, next) => {
     try {
-        const { username, password } = req.body;
+        const { email, password } = req.body;
 
         // Find user by email
-        const user = await User.findOne({ username }).select('+password');
+        const user = await User.findOne({ email }).select('+password');
         if (!user) {
             return next(new ErrorHandler('Invalid credentials', 401));
         }
@@ -57,5 +57,25 @@ export const login = catchAsyncErrors(async (req, res, next) => {
         res.status(200).json({ token, user: { _id: user._id }, success: true });
     } catch (error) {
         return next(new ErrorHandler(`user couldn't logged in. ${error.message}`, 400));
+    }
+});
+
+export const logout = catchAsyncErrors(async (req, res, next) => {
+    try {
+
+        const token = req.header('Authorization')?.replace('Bearer ', '');
+        console.log(token)
+
+        if (!token) {
+            return next(new ErrorHandler('No token found, please log in first', 401));
+        }
+
+        res.status(200).json({
+            success: true,
+            message: 'Successfully logged out. Token will be cleared on client side.',
+        });
+
+    } catch (error) {
+        return next(new ErrorHandler(`Could not log out: ${error.message}`, 500));
     }
 });
